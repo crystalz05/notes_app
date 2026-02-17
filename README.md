@@ -126,16 +126,16 @@ dev_dependencies:
 
 ## 🎨 Screenshots
 
-> [List Screen](screenshots/list_screen_light.jpg)
-> [List Screen](screenshots/list_screen_dark.jpg)
-> [List Screen](screenshots/new_note_screen_dark.jpg)
-> [List Screen](screenshots/setting_screen_dark.jpg)
-> [List Screen](screenshots/setting_screen_light.jpg)
-> [List Screen](screenshots/not_found_screen_light.jpg)
-> [List Screen](screenshots/not_found_screen_dark.jpg)
-> [List Screen](screenshots/about_screen_dark.jpg)
-> [List Screen](screenshots/about_screen_light.jpg)
-> [List Screen](screenshots/edit_screen_light.jpg)
+> ![List Screen Light](screenshots/list_screen_light.jpg)
+> ![List Screen Dark](screenshots/list_screen_dark.jpg)
+> ![New Note Screen Dark](screenshots/new_note_screen_dark.jpg)
+> ![Setting Screen Dark](screenshots/setting_screen_dark.jpg)
+> ![Setting Screen Light](screenshots/setting_screen_light.jpg)
+> ![Not Found Screen Light](screenshots/not_found_screen_light.jpg)
+> ![Not Found Screen Dark](screenshots/not_found_screen_dark.jpg)
+> ![About Screen Dark](screenshots/about_screen_dark.jpg)
+> ![About Screen Light](screenshots/about_screen_light.jpg)
+> ![Edit Screen Light](screenshots/edit_screen_light.jpg)
 
 ### Light Mode
 - Home screen with notes list
