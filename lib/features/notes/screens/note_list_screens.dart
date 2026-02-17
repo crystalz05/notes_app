@@ -8,6 +8,8 @@ import 'package:tyro_notes_application/features/notes/bloc/note_state.dart';
 import 'package:tyro_notes_application/features/notes/screens/note_editor_screen.dart';
 import 'package:tyro_notes_application/features/notes/screens/setting_screen.dart';
 import 'package:tyro_notes_application/features/notes/widgets/delete_dialog.dart';
+import 'package:tyro_notes_application/features/notes/widgets/animated_item.dart';
+import 'package:tyro_notes_application/features/notes/widgets/shimmer_loading.dart';
 import '../models/note.dart';
 
 class NotesListScreen extends StatelessWidget {
@@ -25,16 +27,23 @@ class NotesListScreen extends StatelessWidget {
         ],
       ),
 
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _navigateToEditor(context, null),
-        icon: const Icon(Icons.edit_outlined),
-        label: const Text(
-          'New Note',
-          style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
+      floatingActionButton: ScaleTransition(
+        scale: CurvedAnimation(
+          parent: const AlwaysStoppedAnimation(1.0),
+          curve: Curves.easeOut,
         ),
-        elevation: 2,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+        child: FloatingActionButton.extended(
+          onPressed: () => _navigateToEditor(context, null),
+          icon: const Icon(Icons.edit_outlined),
+          label: const Text(
+            'New Note',
+            style: TextStyle(fontWeight: FontWeight.w600, letterSpacing: 0.5),
+          ),
+          elevation: 2,
+          heroTag: 'newNoteFAB',
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
       ),
 
@@ -44,7 +53,10 @@ class NotesListScreen extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: () async {
             context.read<NoteBloc>().add(LoadNotes());
-            await context.read<NoteBloc>().stream.firstWhere((state) => state is NoteLoaded);
+            // Wait for either NoteLoaded or NoteError with timeout
+            await context.read<NoteBloc>().stream
+                .firstWhere((state) => state is NoteLoaded || state is NoteError)
+                .timeout(const Duration(seconds: 10), onTimeout: () => NoteError('Refresh timeout'));
           },
           child: Column(
               children: [
@@ -120,7 +132,7 @@ class NotesListScreen extends StatelessWidget {
                     child: BlocBuilder<NoteBloc, NoteState>(
                         builder: (context, state){
                           if(state is NoteLoading){
-                            return const Center(child: CircularProgressIndicator());
+                            return const ShimmerLoading();
                           }
                           if(state is NoteError){
                             return Center(child: Text('Error: ${state.message}'));
@@ -162,7 +174,10 @@ class NotesListScreen extends StatelessWidget {
                                 separatorBuilder: (context, index) => SizedBox(height: 10),
                                 itemBuilder: (context, index){
                                   final note = state.notes[index];
-                                  return _buildNoteCard(context, note);
+                                  return StaggeredAnimatedItem(
+                                    index: index,
+                                    child: _buildNoteCard(context, note, index),
+                                  );
                                 }
                             );
                           }
@@ -177,13 +192,24 @@ class NotesListScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildNoteCard(BuildContext context, NoteModel note) {
-    return Container(
-      decoration: BoxDecoration(
-          color: Color(note.color).withValues(alpha: 0.7),
-          borderRadius: BorderRadius.all(Radius.circular(8))
-      ),
-      child: ListTile(
+  Widget _buildNoteCard(BuildContext context, NoteModel note, int index) {
+    return Hero(
+      tag: 'note_${note.id ?? index}',
+      child: Material(
+        color: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+              color: Color(note.color).withValues(alpha: 0.7),
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 4,
+                  offset: Offset(0, 2),
+                ),
+              ]
+          ),
+          child: ListTile(
         minVerticalPadding: 12,
         title: Text(
           note.title,
@@ -209,6 +235,8 @@ class NotesListScreen extends StatelessWidget {
         ),
         onTap: () => _navigateToEditor(context, note),
         onLongPress: () => showDeleteSheet(context, note),
+          ),
+        ),
       ),
     );
   }

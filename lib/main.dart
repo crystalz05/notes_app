@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tyro_notes_application/core/database/app_database.dart';
+import 'package:tyro_notes_application/core/theme/app_theme.dart';
 import 'package:tyro_notes_application/cubit/sort_cubit.dart';
 import 'package:tyro_notes_application/cubit/theme_cubit.dart';
 import 'package:tyro_notes_application/features/notes/bloc/note_event.dart';
@@ -36,20 +37,12 @@ class MyApp extends StatelessWidget {
         child: BlocBuilder<ThemeCubit, bool>(
             builder: (context, isDark){
               return MaterialApp(
-                title: 'Flutter Demo',
+                title: 'Tyro Notes',
                 debugShowCheckedModeBanner: false,
-                theme: ThemeData(
-                  primarySwatch: Colors.blue,
-                  useMaterial3: true,
-                  brightness: Brightness.light,
-                ),
-                darkTheme: ThemeData(
-                    primarySwatch: Colors.blue,
-                    useMaterial3: true,
-                    brightness: Brightness.dark
-                ),
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
                 themeMode: isDark? ThemeMode.dark : ThemeMode.light,
-                home: NotesListScreen(),
+                home: const NotesListScreen(),
               );
             }
         )
