@@ -96,7 +96,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `Note` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `color` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `Note` (`id` INTEGER PRIMARY KEY AUTOINCREMENT, `title` TEXT NOT NULL, `content` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `updatedAt` INTEGER NOT NULL, `color` INTEGER NOT NULL)');
 
         await callback?.onCreate?.call(database, version);
       },
@@ -172,7 +172,7 @@ class _$NoteDao extends NoteDao {
             content: row['content'] as String,
             createdAt: _dateTimeConverter.decode(row['createdAt'] as int),
             updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int),
-            color: row['color'] as String));
+            color: row['color'] as int));
   }
 
   @override
@@ -184,16 +184,88 @@ class _$NoteDao extends NoteDao {
             content: row['content'] as String,
             createdAt: _dateTimeConverter.decode(row['createdAt'] as int),
             updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int),
-            color: row['color'] as String),
+            color: row['color'] as int),
         arguments: [id]);
   }
 
   @override
-  Future<List<NoteModel>> searchNotes(String query) async {
+  Future<List<NoteModel>> searchNewestFirst(String query) async {
     return _queryAdapter.queryList(
         'SELECT * FROM Note WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY updatedAt DESC',
-        mapper: (Map<String, Object?> row) => NoteModel(id: row['id'] as int?, title: row['title'] as String, content: row['content'] as String, createdAt: _dateTimeConverter.decode(row['createdAt'] as int), updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int), color: row['color'] as String),
+        mapper: (Map<String, Object?> row) => NoteModel(id: row['id'] as int?, title: row['title'] as String, content: row['content'] as String, createdAt: _dateTimeConverter.decode(row['createdAt'] as int), updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int), color: row['color'] as int),
         arguments: [query]);
+  }
+
+  @override
+  Future<List<NoteModel>> searchOldestFirst(String query) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Note WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY updatedAt ASC',
+        mapper: (Map<String, Object?> row) => NoteModel(id: row['id'] as int?, title: row['title'] as String, content: row['content'] as String, createdAt: _dateTimeConverter.decode(row['createdAt'] as int), updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int), color: row['color'] as int),
+        arguments: [query]);
+  }
+
+  @override
+  Future<List<NoteModel>> searchTitleAZ(String query) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Note WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY title ASC',
+        mapper: (Map<String, Object?> row) => NoteModel(id: row['id'] as int?, title: row['title'] as String, content: row['content'] as String, createdAt: _dateTimeConverter.decode(row['createdAt'] as int), updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int), color: row['color'] as int),
+        arguments: [query]);
+  }
+
+  @override
+  Future<List<NoteModel>> searchTitleZA(String query) async {
+    return _queryAdapter.queryList(
+        'SELECT * FROM Note WHERE title LIKE ?1 OR content LIKE ?1 ORDER BY title DESC',
+        mapper: (Map<String, Object?> row) => NoteModel(id: row['id'] as int?, title: row['title'] as String, content: row['content'] as String, createdAt: _dateTimeConverter.decode(row['createdAt'] as int), updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int), color: row['color'] as int),
+        arguments: [query]);
+  }
+
+  @override
+  Future<List<NoteModel>> getNotesNewestFirst() async {
+    return _queryAdapter.queryList('SELECT * FROM Note ORDER BY updatedAt DESC',
+        mapper: (Map<String, Object?> row) => NoteModel(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            content: row['content'] as String,
+            createdAt: _dateTimeConverter.decode(row['createdAt'] as int),
+            updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int),
+            color: row['color'] as int));
+  }
+
+  @override
+  Future<List<NoteModel>> getNotesOldestFirst() async {
+    return _queryAdapter.queryList('SELECT * FROM Note ORDER BY updatedAt ASC',
+        mapper: (Map<String, Object?> row) => NoteModel(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            content: row['content'] as String,
+            createdAt: _dateTimeConverter.decode(row['createdAt'] as int),
+            updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int),
+            color: row['color'] as int));
+  }
+
+  @override
+  Future<List<NoteModel>> getNotesTitleAZ() async {
+    return _queryAdapter.queryList('SELECT * FROM Note ORDER BY title ASC',
+        mapper: (Map<String, Object?> row) => NoteModel(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            content: row['content'] as String,
+            createdAt: _dateTimeConverter.decode(row['createdAt'] as int),
+            updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int),
+            color: row['color'] as int));
+  }
+
+  @override
+  Future<List<NoteModel>> getNotesTitleZA() async {
+    return _queryAdapter.queryList('SELECT * FROM Note ORDER BY title DESC',
+        mapper: (Map<String, Object?> row) => NoteModel(
+            id: row['id'] as int?,
+            title: row['title'] as String,
+            content: row['content'] as String,
+            createdAt: _dateTimeConverter.decode(row['createdAt'] as int),
+            updatedAt: _dateTimeConverter.decode(row['updatedAt'] as int),
+            color: row['color'] as int));
   }
 
   @override

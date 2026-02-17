@@ -14,7 +14,7 @@ class NoteModel {
 
   @TypeConverters([DateTimeConverter])
   final DateTime updatedAt;
-  final String color;
+  final int color;
 
   NoteModel({
     this.id,
@@ -31,7 +31,7 @@ class NoteModel {
     String? content,
     DateTime? createdAt,
     DateTime? updatedAt,
-    String? color,
+    int? color,
   }) {
     return NoteModel(
       id: id ?? this.id,

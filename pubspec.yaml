@@ -18,6 +18,16 @@ dependencies:
   equatable: ^2.0.5
   floor: ^1.4.2
   intl: ^0.18.1
+  shared_preferences: ^2.2.2
+  flutter_launcher_icons: ^0.14.1
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/icon/tyro_note.png"
+  adaptive_icon_background: "#ffffff"  # Android adaptive icon background color
+  adaptive_icon_foreground: "assets/icon/tyro_note.png"
 
 dev_dependencies:
   flutter_test:
@@ -30,3 +40,5 @@ dev_dependencies:
 flutter:
 
   uses-material-design: true
+  assets:
+    - assets/icon/tyro_note.png
